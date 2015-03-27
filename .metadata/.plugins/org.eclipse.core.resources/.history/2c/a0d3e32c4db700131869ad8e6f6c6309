@@ -1,0 +1,109 @@
+/* 
+ * AP(r) Computer Science GridWorld Case Study:
+ * Copyright(c) 2005-2006 Cay S. Horstmann (http://horstmann.com)
+ *
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation.
+ *
+ * This code is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * @author Cay Horstmann
+ */
+
+import java.awt.Color;
+
+
+import info.gridworld.actor.ActorWorld;
+import info.gridworld.actor.Bug;
+import info.gridworld.actor.Rock;
+import info.gridworld.grid.UnboundedGrid;
+
+
+
+
+/**
+ * This class runs a world that contains a bug and a rock, added at random
+ * locations. Click on empty locations to add additional actors. Click on
+ * populated locations to invoke methods on their occupants. <br />
+ * To build your own worlds, define your own actors and a runner class. See the
+ * BoxBugRunner (in the boxBug folder) for an example. <br />
+ * This class is not tested on the AP CS A and AB exams.
+ */
+public class BugRunner
+{
+    public static void main(String[] args)
+    {
+    	ActorWorld world = new ActorWorld(new UnboundedGrid());
+        Bug redBug = new Bug();
+        //world.add(redBug);
+        System.out.println(redBug.getLocation());
+        System.out.println(redBug.canMove());        
+        
+        
+        world.add(new Rock());
+        world.show();
+        
+        Bug buggy = new Bug();
+        //world.add(buggy);
+        //moveBug(buggy, 12);
+                
+        
+        double m= Math.random()*100; 
+        if(0 <= m && m <= 24)
+        	 m = 0;
+        else if(25 <= m && m <= 49)
+        	m=90;
+        else if(50 <= m && m <= 74)
+        	m= 180;
+        else
+        	m=270;
+        
+        
+        System.out.println( (int) m );
+        
+        Bug randBuggy = new Bug();
+        world.add(randBuggy);
+        randomBug(randBuggy, 55000);
+        
+    }
+    
+    public static void moveBug(Bug buggy, int n){
+    	if(buggy.canMove()){
+    		if(n>0){
+    			buggy.move();
+    			moveBug(buggy , n-1);
+    		}
+    	}
+    	else{
+    		buggy.turn();
+    		moveBug(buggy, n-1);
+    	}
+    }
+    
+    public static void randomBug(Bug randBuggy, int n){
+    	
+    	double r= Math.random()*100; 
+        if(0 <= r && r <= 24)
+        	r = 0;
+        else if(25 <= r && r <= 49)
+        	r=90;
+        else if(50 <= r && r <= 74)
+        	r= 180;
+        else
+        	r=270;
+        
+    	randBuggy.setDirection((int)r);
+    	
+    	if(randBuggy.canMove()==true){
+    		if(n>0){
+    			randBuggy.move();
+    			randomBug(randBuggy, n-1);
+    		}
+    	}
+    	
+    }
+}

@@ -1,0 +1,80 @@
+package assignment3;
+
+import java.awt.image.BufferedImage;
+import java.util.Set;
+
+public class Scene {
+	// Implement
+	
+	Camera camera;
+	int imageWidth;
+	int imageHeight;
+	Set<Sphere> spheres;
+
+	public Scene(Camera camera, int imageWidth, int imageHeight) {
+		// Implement
+		this.camera = camera;
+		this.imageHeight = imageHeight;
+		this.imageWidth = imageWidth;
+	}
+
+	public void addSphere(Sphere sphere) {
+		// Implement
+		spheres.add(sphere);
+	}
+
+	/**
+	 * Get the closest {@link Sphere} that intersects with the given ray.
+	 * 
+	 * @param ray
+	 *            The ray to shoot at shapes.
+	 * @return An {@link Intersection} object to store shape and distance or
+	 *         <code>null</code> if no intersection has been found.
+	 */
+	public Intersection intersect(Ray ray) {
+		// Implement
+		Sphere s = null;
+		double t = Double.MAX_VALUE;
+		
+		for (Sphere sphere : spheres) {
+			double d = sphere.intersect(ray);
+			if()
+		}
+		
+		return null;
+	}
+
+	/**
+	 * Get a ray from the camera through pixels identified by <code>i</code> and
+	 * <code>j</code>.
+	 * 
+	 * @param i
+	 *            The pixel (0-based) on the width of the picture.
+	 * @param j
+	 *            The pixel (0-based) on the height of the picture.
+	 * @return A new ray from the camera through the pixel.
+	 */
+	public Ray getCameraRay(int i, int j) {
+		// Implement
+		return null;
+	}
+
+	/**
+	 * Compute the light at some ray. Performs intersection tests and recursive
+	 * sampling of up to {@link #MAX_DEPTH} ({@value #MAX_DEPTH}) levels.
+	 * 
+	 * @param ray
+	 *            The ray to compute the light for.
+	 * @param depth
+	 *            The current recursion depth.
+	 * @return The color encoded as vector.
+	 */
+	public Vector getLight(Ray ray, int depth) {
+		// Implement
+		return null;
+	}
+
+	public void raytrace(final BufferedImage image, final int samples) {
+		// Implement
+	}
+}

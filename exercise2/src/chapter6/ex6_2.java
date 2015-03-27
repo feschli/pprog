@@ -1,0 +1,28 @@
+package chapter6;
+
+/*Many computations can be expressed concisely using the
+"multadd" operation, which takes three operands and computes a*b + c.
+Some processors even provide a hardware implementation of this operation
+for floating-point numbers.*/
+
+public class ex6_2 {
+	
+	public static void main(String[] args){
+		System.out.println(multAdd(1,Math.sin(Math.PI/4),(Math.cos(Math.PI/4)/2)));
+		System.out.println(multAdd(1, Math.log10(10), Math.log10(20)));
+		System.out.println(yikes(2));
+		
+		
+	}
+	
+	public static double multAdd(double a, double b, double c){
+		return a*b+c;
+	}
+	
+	public static double yikes(double x){
+		double result;
+		result = multAdd(1, x*Math.exp(-x), Math.sqrt(1-Math.exp(-x)));
+		return result;
+	}
+	
+}
