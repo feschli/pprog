@@ -2,17 +2,38 @@ package assignment3;
 
 import java.awt.image.BufferedImage;
 import java.util.Set;
+import java.util.Random;
+import java.util.HashSet;
 
 public class Scene {
 	// Implement
+	
+	private final Random random = new Random();
 
-	Camera camera;
-	int imageWidth;
-	int imageHeight;
-	Set<Sphere> spheres;
+	private final Camera camera;
+	private final int imageWidth;
+	private final int imageHeight;
+	private final Set<Sphere> spheres = new HashSet<Sphere>();
+	
+	public Camera getCamera(){
+		return camera;
+	}
+	
+	public int getImageWidth(){
+		return imageWidth;
+	}
+	
+	public int getImageHeight(){
+		return imageHeight;
+	}
+	
+	public Set<Sphere> getShapes(){
+		return spheres;
+	}
 
 	public Scene(Camera camera, int imageWidth, int imageHeight) {
 		// Implement
+		super();
 		this.camera = camera;
 		this.imageHeight = imageHeight;
 		this.imageWidth = imageWidth;
@@ -33,18 +54,24 @@ public class Scene {
 	 */
 	public Intersection intersect(Ray ray) {
 		// Implement
-		Sphere s0 = null;
-		double t0 = Double.MAX_VALUE;
+		Sphere s = null;
+		double t = Double.MAX_VALUE;
 
 		for (Sphere sphere : spheres) {
-			double t = sphere.intersect(ray);
-			if (sphere.intersect(ray) == t && t < t0) {
-				s0 = sphere;
-				t0 = t;
+			double d = sphere.intersect(ray);
+			if (d != Double.NaN && d<t) {
+				s = sphere;
+				t = d;
 			}
 		}
+		
+		if(s!= null){
+			return new Intersection(s, t);
+		}
+		else
+			return null;
 
-		return new Intersection(s0, t0);
+		
 	}
 
 	/**
@@ -59,16 +86,28 @@ public class Scene {
 	 */
 	public Ray getCameraRay(int i, int j) {
 		// Implement
-		Vector u, v, w, a, b, c, s, e;
-		final Vector zero = new Vector (0,0,0);
-		double wid, hei;
-		
-		w = zero.minus((camera.getEye().direction)).normalize();
-		
-		wid = 1.0*i/imageWidth;
-		hei = 1.0 * j/imageHeight;
-		
-		return null;
+		final Vector origin = camera.getEye().getStart();
+		Vector w = camera.getEye().getDirection().normalize().smult(-1);
+		Vector u = camera.getUp().cross(w).normalize();
+		Vector v = w.cross(u);
+
+		double u0 = -1;
+		double v0 = -1;
+		double u1 = 1;
+		double v1 = 1;
+		double s = 2;
+
+		Vector a = u.smult(u1 - u0);
+		Vector b = v.smult(v1 - v0);
+		Vector c = origin.plus(u.smult(u0)).plus(v.smult(v0)).minus(w.smult(s));
+
+		double wp = 1. * i / imageWidth;
+		double hp = 1. * j / imageHeight;
+
+		Vector screen = c.plus(a.smult(wp)).plus(b.smult(hp));
+
+		return new Ray(origin, screen.minus(origin).normalize());
+
 	}
 
 	/**
@@ -82,11 +121,57 @@ public class Scene {
 	 * @return The color encoded as vector.
 	 */
 	public Vector getLight(Ray ray, int depth) {
-		// Implement
-		return null;
+		Intersection intersection = intersect(ray);
+		if (intersection != null) {
+			final Sphere sphere = intersection.getSphere();
+			if (depth > 5) {
+				return sphere.getEmission();
+			}
+
+			double r1 = 2.0 * Math.PI * random.nextDouble();
+			double r2 = random.nextDouble();
+
+			Vector x = ray.getDirection().plus(
+					ray.getDirection().smult(intersection.getT()));
+			Vector n = x.minus(sphere.getPosition()).normalize();
+			Vector n1 = n.dot(ray.getDirection()) < 0.0 ? n : n.smult(-1.);
+
+			Vector w = n1;
+			Vector u = new Vector(1, 0, 0).cross(w).normalize();
+			Vector v = w.cross(u);
+
+			Vector d = u.smult(Math.cos(r1) * Math.sin(r2))
+					.plus(v.smult(Math.sin(r1) * Math.sin(r2)))
+					.plus(w.smult(Math.cos(r2))).normalize();
+			
+//			System.out.println(sphere.getEmission().plus(
+//					sphere.getColor().mul(getLight(new Ray(x, d), depth + 1))));
+			return sphere.getEmission().plus(
+					sphere.getColor().mul(getLight(new Ray(x, d), depth + 1)));
+		} else {
+			return Vector.VEC_ZERO;
+		}
 	}
+
 
 	public void raytrace(final BufferedImage image, final int samples) {
 		// Implement
+		for (int j = 0; j < getImageHeight(); j++) {
+			if ((j % 10) == 0) {
+				System.out.print(".");
+			}
+			for (int i = 0; i < getImageWidth(); i++) {
+				Ray ray = getCameraRay(i, j);
+
+				Vector r = Vector.VEC_ZERO;
+				for (int s = 0; s < samples; s++) {
+					r = r.plus(getLight(ray, 0));
+				}
+
+				image.setRGB(i, getImageHeight() - j - 1, r
+						.smult(1. / samples).toRGB());
+			}
+		}
+
 	}
 }

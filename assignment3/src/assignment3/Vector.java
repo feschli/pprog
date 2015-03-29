@@ -66,7 +66,8 @@ public class Vector {
 	}
 
 	public Vector normalize() {
-		return this.smult(1 / this.norm());
+		final double inorm = 1/this.norm();
+		return smult(inorm);
 	}
 
 	public Vector plus(Vector r) {

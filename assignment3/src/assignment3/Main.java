@@ -14,7 +14,7 @@ public class Main {
 		final int width = 1024;
 		final int height = 768;
 
-		final int samples = 100;
+		final int samples = 30;
 
 		final Camera camera = new Camera(new Ray(new Vector(50, 52, 295.6),
 				new Vector(0, -0.042612, -1)), new Vector(0, 1, 0));
@@ -47,7 +47,7 @@ public class Main {
 				new Vector(0.999, 0.999, 0.999), new Vector(0.0, 0.0, 0.0)));
 		// Light-source
 		scene.addSphere(new Sphere(600, new Vector(50, 681.6 - 0.27, 81.6),
-				new Vector(0.0, 0.0, 0.0), new Vector(12.0, 12.0, 12.0)));
+				new Vector(0.99, 0.99, 0.99), new Vector(12.0, 12.0, 12.0)));
 
 		final BufferedImage image = new BufferedImage(width, height,
 				ColorSpace.TYPE_RGB);
@@ -65,3 +65,4 @@ public class Main {
 		}
 	}
 }
+

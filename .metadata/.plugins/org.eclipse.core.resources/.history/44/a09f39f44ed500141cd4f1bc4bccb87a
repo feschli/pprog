@@ -1,0 +1,24 @@
+package assignment3;
+
+public class Camera {
+	// Implement
+	
+	private final Ray eye;
+	private final Vector up;
+
+	public Camera(Ray eye, Vector up) {
+		// Implement
+		super();
+		this.eye = eye;
+		this.up = up;
+	}
+	
+	public Ray getEye(){
+		return eye;
+	}
+	
+	public Vector getUp(){
+		return up;
+	}
+
+}

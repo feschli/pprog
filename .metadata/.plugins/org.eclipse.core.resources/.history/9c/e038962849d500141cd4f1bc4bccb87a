@@ -1,0 +1,61 @@
+package assignment3;
+
+public class Sphere {
+	// Implement
+
+	private final Vector position;
+	private final double radius;
+	private final Vector color;
+	private final Vector emission;
+
+	public Sphere(double radius, Vector position, Vector color, Vector emission) {
+		// Implement
+		this.position = position;
+		this.radius = radius;
+		this.color = color;
+		this.emission = emission;
+
+	}
+	
+	public Vector getColor(){
+		return color;
+	}
+	
+	public Vector getEmission(){
+		return emission;
+	}
+	
+	public Vector getPosition(){
+		return position;
+	}
+	
+	public double getRadius(){
+		return radius;
+	}
+
+	public double intersect(Ray ray) {
+		double t1, t2;
+		final double eps = 1e-4;
+		Vector v = this.getPosition().minus(ray.getStart());
+		double diskriminant = Math.pow(v.dot(ray.getDirection()), 2)
+				- v.dot(v) + Math.pow(this.getRadius(), 2);
+
+		if (diskriminant < 0) {
+			return Double.NaN;
+		} else
+			diskriminant = Math.sqrt(diskriminant);
+
+		t1 = (v.dot(ray.getDirection())) + diskriminant;
+		t2 = (v.dot(ray.getDirection())) - diskriminant;
+
+		if (t2 > eps){
+			return t2;
+		}
+		if(t1>eps){
+			return t1;
+		}
+		return Double.NaN;
+
+	}
+
+}

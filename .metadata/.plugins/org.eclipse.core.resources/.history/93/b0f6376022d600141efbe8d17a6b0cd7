@@ -1,0 +1,16 @@
+package exercise2;
+
+public class AddNumbers {
+	
+	private final int[] arr;
+	
+	
+	
+	public static void main(String[] args){
+		int[] numbers = {1,2,3,4};
+		
+		AddNumbers obj = new AddNumbers();
+		obj.
+	}
+
+}
