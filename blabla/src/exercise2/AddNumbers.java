@@ -1,6 +1,7 @@
 package exercise2;
 
 import java.util.Random;
+import java.math.BigInteger;
 
 public class AddNumbers {
 
@@ -10,8 +11,8 @@ public class AddNumbers {
 		this.arr = arr;
 	}
 
-	public int add() {
-		int result = 1;
+	public long add() {
+		long result = 1;
 
 		for (int i = 0; i < arr.length; i++) {
 			result = result * arr[i];
@@ -26,14 +27,15 @@ public class AddNumbers {
 	public void fillArray(){
 		final Random rand = new Random();
 		
+		
 		for (int i = 0; i < arr.length; i++) {
-			this.arr[i] = rand.nextInt(10000);
+			this.arr[i] = rand.nextInt(500);
 		}
 		
 	}
 
 	public static void main(String[] args) {
-		int[] numbers = new int[10000];
+		int[] numbers = new int[10];
 
 		AddNumbers obj = new AddNumbers(numbers);
 		obj.fillArray();

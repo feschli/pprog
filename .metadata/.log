@@ -2072,3 +2072,6 @@ org.eclipse.recommenders.utils.Logs$LogTraceException
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:603)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1465)
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1438)
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2015-03-29 18:27:00.845
+!MESSAGE Can't handle class org.eclipse.jdt.internal.compiler.ast.BinaryExpression as parent of completion location.
