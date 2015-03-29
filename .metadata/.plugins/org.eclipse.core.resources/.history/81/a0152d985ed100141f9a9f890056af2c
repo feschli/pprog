@@ -1,0 +1,66 @@
+package bladibla;
+
+import java.util.Random;
+
+public class Test {
+
+	private static class genFeld implements Runnable {
+		private final int[] Feld;
+
+		public genFeld(int size) {
+			int[] Feld = new int[size];
+			Random rand = new Random();
+
+			for (int i = 0; i < Feld.length; i++) {
+				Feld[i] = rand.nextInt(10);
+			}
+
+			this.Feld = Feld;
+			
+			System.out.println(Feld.toString());
+			System.out.println();
+			
+			for (int i = 0; i < Feld.length; i++) {
+				System.out.print(Feld[i]+" ");
+			}
+			
+			System.out.println();
+			System.out.print("The bigger number is: ");
+
+			
+		}
+
+		public void run() {
+			if (Feld.length == 2) {
+				if (Feld[0] > Feld[1]) {
+					System.out.println(Feld[0]);
+				} else {
+					System.out.println(Feld[1]);
+				}
+
+			} else
+				System.out.println("Meeeh");
+		}
+
+	}
+
+	public static void main(String[] args) {
+
+		Thread[] threadlist = new Thread[1];
+
+		genFeld Feld1 = new genFeld(2);
+		Thread t = new Thread(Feld1);
+		threadlist[0] = t;
+		t.start();
+		
+
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+}

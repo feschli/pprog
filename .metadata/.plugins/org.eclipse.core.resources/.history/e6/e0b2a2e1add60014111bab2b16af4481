@@ -1,0 +1,229 @@
+package assignment4;
+
+import java.awt.image.BufferedImage;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.*;
+
+public class Scene {
+
+	private final Random random = new Random();
+
+	public final static int MAX_DEPTH = 5;
+
+	private final Camera camera;
+
+	private final int imageWidth;
+
+	private final int imageHeight;
+
+	private final Set<Sphere> spheres = new HashSet<Sphere>();
+
+	public Scene(Camera camera, int imageWidth, int imageHeight) {
+		super();
+		this.camera = camera;
+		this.imageWidth = imageWidth;
+		this.imageHeight = imageHeight;
+	}
+
+	public void addSphere(Sphere sphere) {
+		spheres.add(sphere);
+	}
+
+	/**
+	 * Find the closest {@link Sphere} that intersects with the given ray.
+	 * 
+	 * @param ray
+	 *            The ray to shoot at shapes.
+	 * @return An {@link Intersection} object to store shape and distance or
+	 *         <code>null</code> if no intersection has been found.
+	 */
+	public Intersection intersect(Ray ray) {
+		double t = Double.MAX_VALUE;
+		Sphere s = null;
+		for (Sphere sphere : spheres) {
+			double d = sphere.intersect(ray);
+			if (d != Double.NaN && d < t) {
+				t = d;
+				s = sphere;
+			}
+		}
+		if (s != null) {
+			return new Intersection(s, t);
+		} else {
+			return null;
+		}
+	}
+
+	public Camera getCamera() {
+		return camera;
+	}
+
+	public int getPlaneHeight() {
+		return imageHeight;
+	}
+
+	public int getPlaneWidth() {
+		return imageWidth;
+	}
+
+	public Set<Sphere> getShapes() {
+		return spheres;
+	}
+
+	/**
+	 * Get a ray from the camera through pixels identified by <code>i</code> and
+	 * <code>j</code>.
+	 * 
+	 * @param i
+	 *            The pixel (0-based) on the width of the picture.
+	 * @param j
+	 *            The pixel (0-based) on the height of the picture.
+	 * @return A new ray from the camera through the pixel.
+	 */
+	public Ray getCameraRay(int i, int j) {
+		final Vector origin = camera.getEye().getOrigin();
+		Vector w = camera.getEye().getDirection().normalize().smult(-1);
+		Vector u = camera.getUp().cross(w).normalize();
+		Vector v = w.cross(u);
+
+		double u0 = -1;
+		double v0 = -1;
+		double u1 = 1;
+		double v1 = 1;
+		double s = 2;
+
+		Vector a = u.smult(u1 - u0);
+		Vector b = v.smult(v1 - v0);
+		Vector c = origin.plus(u.smult(u0)).plus(v.smult(v0)).minus(w.smult(s));
+
+		double wp = 1. * i / imageWidth;
+		double hp = 1. * j / imageHeight;
+
+		Vector screen = c.plus(a.smult(wp)).plus(b.smult(hp));
+
+		return new Ray(origin, screen.minus(origin).normalize());
+	}
+
+	/**
+	 * Compute the light at some ray. Performs intersection tests and recursive
+	 * sampling of up to {@link #MAX_DEPTH} ({@value #MAX_DEPTH}) levels.
+	 * 
+	 * @param ray
+	 *            The ray to compute the light for.
+	 * @param depth
+	 *            The current recursion depth.
+	 * @return The color encoded as vector.
+	 */
+	public Vector getLight(Ray ray, int depth) {
+		Intersection intersection = intersect(ray);
+		if (intersection != null) {
+			final Sphere sphere = intersection.getSphere();
+			if (depth > MAX_DEPTH) {
+				return sphere.getEmission();
+			}
+
+			double r1 = 2.0 * Math.PI * random.nextDouble();
+			double r2 = random.nextDouble();
+
+			Vector x = ray.getOrigin().plus(
+					ray.getDirection().smult(intersection.getT()));
+			Vector n = x.minus(sphere.getPosition()).normalize();
+			Vector n1 = n.dot(ray.getDirection()) < 0.0 ? n : n.smult(-1.);
+
+			Vector w = n1;
+			Vector u = new Vector(1, 0, 0).cross(w).normalize();
+			Vector v = w.cross(u);
+
+			Vector d = u.smult(Math.cos(r1) * Math.sin(r2))
+					.plus(v.smult(Math.sin(r1) * Math.sin(r2)))
+					.plus(w.smult(Math.cos(r2))).normalize();
+			return sphere.getEmission().plus(
+					sphere.getColor().mul(getLight(new Ray(x, d), depth + 1)));
+		} else {
+			return Vector.VEC_ZERO;
+		}
+	}
+
+	public void raytrace(final BufferedImage image, final int samples) {
+		// for ( int j = 0; j < getPlaneHeight(); j++) {
+		// if ((j % 10) == 0) {
+		// System.out.print(".");
+		// }
+
+		Thread[] threadlist = new Thread[16];
+		for (int k = 0; k < threadlist.length; k++) {
+			final int k1 = k;
+			Thread t = new Thread() {
+				public void run() {
+					for (int j = 0; j < getPlaneHeight(); j++) {
+						if ((j % 10) == 0) {
+							System.out.print(".");
+						}
+						for (int i = getPlaneWidth()*k1/8; i < getPlaneWidth()*(k1+1)/8; i++) {
+							Ray ray = getCameraRay(i, j);
+
+							Vector r = Vector.VEC_ZERO;
+							for (int s = 0; s < samples; s++) {
+								r = r.plus(getLight(ray, 0));
+							}
+
+							image.setRGB(i, getPlaneHeight() - j - 1,
+									r.smult(1. / samples).toRGB());
+						}
+					}
+				}
+			};
+			threadlist[k] = t;
+			try {
+				TimeUnit.SECONDS.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			t.start();
+		}
+
+		// for (Thread t : threadlist) {
+		// try {
+		// t.join();
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		//
+		// for (int i = getPlaneWidth()*6/8; i < getPlaneWidth()*7/8; i++) {
+		// Ray ray = getCameraRay(i, j);
+		//
+		// Vector r = Vector.VEC_ZERO;
+		// for (int s = 0; s < samples; s++) {
+		// r = r.plus(getLight(ray, 0));
+		// }
+		//
+		// image.setRGB(i, getPlaneHeight() - j - 1, r
+		// .smult(1. / samples).toRGB());
+		// }
+		//
+		// Thread[] threadlist = new Thread[8];
+		// for (int i = 0; i < threadlist.length; i++) {
+		// Scene s = new Scene(camera,this.imageHeight,this.getPlaneWidth());
+		// Thread t = new Thread(s);
+		// threadlist[i-1]=t;
+		// t.start();
+		// }
+		//
+		// for (Thread t : threadlist) {
+		// try {
+		// t.join();
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+
+		// }
+	}
+
+}

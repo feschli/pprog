@@ -1,0 +1,77 @@
+package bladibla;
+
+import java.util.Random;
+
+public class Test {
+
+	private static class genFeld implements Runnable {
+		private final int[] Feld;
+
+		public genFeld(int size) {
+			int[] Feld = new int[size];
+			Random rand = new Random();
+
+			for (int i = 0; i < Feld.length; i++) {
+				Feld[i] = rand.nextInt(10);
+			}
+
+			this.Feld = Feld;
+
+			System.out.println();
+
+			for (int i = 0; i < Feld.length; i++) {
+				System.out.print(Feld[i] + ", ");
+
+			}
+
+			System.out.println();
+			System.out.print("The bigger number is: ");
+
+		}
+
+		public void run(int[] Teilfeld) {
+			int largestNum;
+			if (Teilfeld.length == 1) {
+				largestNum = Feld[0];
+			} else if (Teilfeld.length == 2) {
+				if (Teilfeld[1] > Teilfeld[0]) {
+					largestNum = Teilfeld[1];
+				} else {
+					largestNum = Teilfeld[0];
+				}
+
+			} else {
+				int[] kleinFeld = new int[Feld.length/2];
+				int[] grossFeld = new int[Feld.length/2];
+				
+				System.arraycopy(Feld, 0, kleinFeld, 0, kleinFeld.length);
+				System.arraycopy(Feld, kleinFeld.length, grossFeld, 0, grossFeld.length);
+				this.run(kleinFeld);
+				this.run(grossFeld);
+				
+			}
+			
+			System.out.println(largestNum);
+		}
+
+	}
+
+	public static void main(String[] args) {
+
+		Thread[] threadlist = new Thread[1];
+
+		genFeld Feld1 = new genFeld(4);
+		Thread t = new Thread(Feld1);
+		threadlist[0] = t;
+		t.start();
+
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+}

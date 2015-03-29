@@ -1,0 +1,9 @@
+package assignment2;
+
+public class Ray {
+	
+	// Implement class Ray according to the exercise sheet!
+	public Ray(Vector origin, Vector direction) {
+		// TODO
+	}
+}

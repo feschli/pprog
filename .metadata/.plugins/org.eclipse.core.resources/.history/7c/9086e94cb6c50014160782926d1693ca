@@ -1,0 +1,68 @@
+package assignment3;
+
+public class Sphere {
+	// Implement class Sphere according to the exercise sheet!
+	private final Vector v;
+	private final double d;
+	private final Vector color;
+	
+	
+	public Sphere(double radius, Vector center, Vector color) {
+		// TODO
+		this.v = center;
+		this.d = radius;
+		this.color = color;
+	}
+	
+	public Vector getColor() {
+		// TODO
+		return color;
+	}
+	
+	public Vector getPosition(){
+		return v;
+	}
+	
+	public double getRadius(){
+		return d;
+	}
+	
+	public double intersect(Ray r) {
+		// TODO
+		Vector w = r.start.minus(this.v);
+		double t1,t2,d;
+		
+		d = w.dot(r.direction)*w.dot(r.direction)-w.dot(w)+this.d*this.d;		
+		
+		t1 = -w.dot(r.direction)+Math.sqrt(d);
+		t2 = -w.dot(r.direction)-Math.sqrt(d);
+		
+		
+		
+		if(d<0.0){
+			return Double.NaN;
+		}
+		else if(t1>0.0 && t2>0.0){			
+			if(t1>=t2){
+				return t2;
+			}
+			else {
+				return t1;
+			}
+		}
+		
+		else if(t1>0.0 && t2<0.0){
+			return t1;
+		}
+		else if(t1<0.0 && t2>0.0){
+			return t2;
+		}
+		else{
+			return Double.NaN;
+		}
+		
+		
+	}
+	
+	
+}

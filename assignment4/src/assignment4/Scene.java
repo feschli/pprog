@@ -10,7 +10,6 @@ public class Scene {
 
 	private final Random random = new Random();
 
-	
 	public final static int MAX_DEPTH = 5;
 
 	private final Camera camera;
@@ -27,7 +26,6 @@ public class Scene {
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
 	}
-	
 
 	public void addSphere(Sphere sphere) {
 		spheres.add(sphere);
@@ -149,45 +147,86 @@ public class Scene {
 	}
 
 	public void raytrace(final BufferedImage image, final int samples) {
-		for (int j = 0; j < getPlaneHeight(); j++) {
-			if ((j % 10) == 0) {
-				System.out.print(".");
-			}
-			
-			Thread[] threadlist = new Thread[8];
-			
-			for (int i = getPlaneWidth()*6/8; i < getPlaneWidth()*7/8; i++) {
-				Ray ray = getCameraRay(i, j);
+		// for ( int j = 0; j < getPlaneHeight(); j++) {
+		// if ((j % 10) == 0) {
+		// System.out.print(".");
+		// }
+		
+		final int numberOfThreads = 8;
+		Thread[] threadlist = new Thread[numberOfThreads];
+		for (int k = 0; k < threadlist.length; k++) {
+			final int k1 = k;
+			Thread t = new Thread() {
+				public void run() {
+					for (int j = 0; j < getPlaneHeight(); j++) {
+						if ((j % 10) == 0) {
+							System.out.print(".");
+						}
+						
+						
+						for (int i = getPlaneWidth()*k1/numberOfThreads; i < getPlaneWidth()*(k1+1)/numberOfThreads; i++) {
+							Ray ray = getCameraRay(i, j);
 
-				Vector r = Vector.VEC_ZERO;
-				for (int s = 0; s < samples; s++) {
-					r = r.plus(getLight(ray, 0));
+							Vector r = Vector.VEC_ZERO;
+							for (int s = 0; s < samples; s++) {
+								r = r.plus(getLight(ray, 0));
+							}
+
+							image.setRGB(i, getPlaneHeight() - j - 1,
+									r.smult(1. / samples).toRGB());
+						}
+					}
 				}
-
-				image.setRGB(i, getPlaneHeight() - j - 1, r
-						.smult(1. / samples).toRGB());
-			}
-			
-//			Thread[] threadlist = new Thread[8];
-//			for (int i = 0; i < threadlist.length; i++) {
-//				Scene s = new Scene(camera,this.imageHeight,this.getPlaneWidth());
-//				Thread t = new Thread(s);
-//				threadlist[i-1]=t;
-//				t.start();
+			};
+			threadlist[k] = t;
+//			try {
+//				TimeUnit.SECONDS.sleep(1);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
 //			}
-//			
-//			for (Thread t : threadlist) {
-//				try {
-//					t.join();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-			
-			
-			
+			t.start();
 		}
+
+		// for (Thread t : threadlist) {
+		// try {
+		// t.join();
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		//
+		// for (int i = getPlaneWidth()*6/8; i < getPlaneWidth()*7/8; i++) {
+		// Ray ray = getCameraRay(i, j);
+		//
+		// Vector r = Vector.VEC_ZERO;
+		// for (int s = 0; s < samples; s++) {
+		// r = r.plus(getLight(ray, 0));
+		// }
+		//
+		// image.setRGB(i, getPlaneHeight() - j - 1, r
+		// .smult(1. / samples).toRGB());
+		// }
+		//
+		// Thread[] threadlist = new Thread[8];
+		// for (int i = 0; i < threadlist.length; i++) {
+		// Scene s = new Scene(camera,this.imageHeight,this.getPlaneWidth());
+		// Thread t = new Thread(s);
+		// threadlist[i-1]=t;
+		// t.start();
+		// }
+		//
+		// for (Thread t : threadlist) {
+		// try {
+		// t.join();
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+
+		// }
 	}
 
 }

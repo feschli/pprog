@@ -1,0 +1,11 @@
+package assignment3;
+
+public class Sphere {
+
+	// Implement
+
+	public Sphere(double radius, Vector position, Vector color, Vector emission) {
+		// Implement
+	}
+
+}

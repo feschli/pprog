@@ -1,0 +1,19 @@
+package assignment2;
+
+public class Sphere {
+	// Implement class Sphere according to the exercise sheet!
+	
+	public Sphere(double radius, Vector center, Vector color) {
+		// TODO
+	}
+	
+	public Vector getColor() {
+		// TODO
+		return new Vector(0, 0, 0);
+	}
+	
+	public double intersect(Ray r) {
+		// TODO
+		return 0.0;
+	}
+}

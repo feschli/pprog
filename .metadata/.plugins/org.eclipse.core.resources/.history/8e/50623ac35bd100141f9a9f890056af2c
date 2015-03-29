@@ -1,0 +1,65 @@
+package bladibla;
+
+import java.util.Random;
+
+public class Test implements Runnable {
+
+	public static int[] Feld;
+
+	public static void genFeld(int size) {
+
+		int[] Feld = new int[size];
+		Random rand = new Random();
+
+		for (int i = 0; i < Feld.length; i++) {
+			Feld[i] = rand.nextInt(10);
+		}
+
+		Test.Feld = Feld;
+
+	}
+
+	public void run() {
+		if (Feld.length == 2) {
+			if (Feld[0] > Feld[1]) {
+				System.out.println(Feld[0]);
+			} else {
+				System.out.println(Feld[1]);
+			}
+
+		} else
+			System.out.println("Meeeh");
+
+	}
+
+	public static void main(String[] args) {
+
+		genFeld(5);
+
+		for (int i = 0; i < Feld.length; i++) {
+
+			System.out.print(Feld[i] + ", ");
+
+		}
+
+		System.out.println();
+		System.out.println();
+
+		Thread[] threadlist = new Thread[1];
+			Thread t = new Thread();
+			threadlist[1] = t;
+			t.start();
+			
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		
+		
+
+	}
+
+}

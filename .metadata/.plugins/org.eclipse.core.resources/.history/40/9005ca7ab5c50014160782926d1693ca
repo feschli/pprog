@@ -1,0 +1,11 @@
+package assignment3;
+
+public class Ray {
+
+	// Implement
+
+	public Ray(Vector origin, Vector direction) {
+		// Implement
+	}
+
+}

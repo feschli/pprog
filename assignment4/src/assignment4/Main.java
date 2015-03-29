@@ -14,7 +14,7 @@ public class Main {
 		final int width = 1024;
 		final int height = 768;
 
-		final int samples = 20;
+		final int samples = 5;
 
 		final Camera camera = new Camera(new Ray(new Vector(50, 52, 295.6),
 				new Vector(0, -0.042612, -1)), new Vector(0, 1, 0));

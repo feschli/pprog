@@ -1,0 +1,93 @@
+package assignment3;
+
+public class Vector {
+
+	private final double x, y, z;
+
+	public Vector(double x, double y, double z) {
+		// Implement
+		this.x = this.y = this.z = Double.NaN;
+	}
+    
+	public Vector clamp(double min, double max) {
+		return new Vector(clamp(x, min, max), clamp(z, min, max), clamp(z, min,
+				max));
+	}
+
+	public Vector cross(Vector o) {
+		// Implement
+		return null;
+	}
+
+	public double dot(Vector r) {
+		// Implement
+		return Double.NaN;
+	}
+
+	public double getX() {
+		// Implement
+		return Double.NaN;
+	}
+
+	public double getY() {
+		// Implement
+		return Double.NaN;
+	}
+
+	public double getZ() {
+		// Implement
+		return Double.NaN;
+	}
+
+	public Vector minus(Vector o) {
+		// Implement
+		return null;
+	}
+
+	public Vector mul(Vector o) {
+		// Implement
+		return null;
+	}
+
+	public double norm() {
+		// Implement
+		return Double.NaN;
+	}
+
+	public Vector normalize() {
+		// Implement
+		return null;
+	}
+
+	public Vector plus(Vector r) {
+		// Implement
+		return null;
+	}
+
+	public Vector smult(double f) {
+		// Implement
+		return null;
+	}
+
+	public int toRGB() {
+		return ((int) (Math.pow(clamp(x, 0, 1), 1 / 2.2) * 255. + .5) << 16)
+				| ((int) (Math.pow(clamp(y, 0, 1), 1 / 2.2) * 255. + .5) << 8)
+				| ((int) (Math.pow(clamp(z, 0, 1), 1 / 2.2) * 255. + .5));
+	}
+
+	private static double clamp(double value, double min, double max) {
+		double d = value;
+		if (d < min) {
+			d = min;
+		} else if (d > max) {
+			d = max;
+		}
+		return d;
+	}
+
+	@Override
+	public String toString() {
+		return "Vector [x=" + x + ", y=" + y + ", z=" + z + "]";
+	}
+
+}

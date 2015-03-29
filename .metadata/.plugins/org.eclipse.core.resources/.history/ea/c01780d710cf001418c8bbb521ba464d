@@ -1,0 +1,19 @@
+package bladibla;
+
+public class Test implements Runnable{
+	private final int[] numbers;
+	
+	public int calc(int size){
+		int[] Feld = new Feld[size];
+		return 0;
+	}
+
+	public void run(){
+		
+	}
+	
+	public static void main(String[] args){
+		
+	}
+
+}
