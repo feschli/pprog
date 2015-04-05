@@ -1,0 +1,150 @@
+package parallelismExperiments;
+
+import java.util.Random;
+import java.util.concurrent.*;
+
+public class ArraySumComparison {
+
+	public static void main(String[] args) {
+
+		int[] array = new int[45];
+		RecSum test1 = new RecSum(array);
+
+		fillArray(test1.getArr());
+
+		printArray(test1.getArr());
+
+		System.out.println();
+		System.out.println();
+
+		// Sum of Array using a sequential function
+		long starts = System.nanoTime();
+		int seqSum = test1.sum();
+		long ends = System.nanoTime();
+
+		System.out.println("The sum (sequential) of the array is " + seqSum
+				+ " and the time was " + (ends - starts) + "ns");
+
+		// Sum of Array using a recursive function
+		long startr = System.nanoTime();
+		int reqSum = test1.recSum(test1.getArr(), 0, test1.getArr().length);
+		long endr = System.nanoTime();
+
+		System.out.println("The sum (recursive) of the array is " + reqSum
+				+ " and the time was " + (endr - startr) + "ns");
+
+		// Sum of Array using Task Parallelism and a recursive function
+		long startp = System.nanoTime();
+
+		ForkJoinPool fj = new ForkJoinPool();
+		parSum t = new parSum(array);
+		int parSum = fj.invoke(t);
+
+		long endp = System.nanoTime();
+
+		System.out.println("The sum (parallel) of the array is " + parSum
+				+ " and the time was " + (endp - startp) + "ns");
+
+	}
+
+	public static void fillArray(int[] array) {
+		Random rand = new Random();
+
+		for (int i = 0; i < array.length; i++) {
+			array[i] = rand.nextInt((int) 10e7);
+		}
+	}
+
+	public static void printArray(int[] array) {
+		for (int i = 0; i < array.length; i++) {
+			System.out.print(array[i] + " ");
+		}
+	}
+
+}
+
+class RecSum {
+
+	private final int[] arr;
+	private int res;
+
+	public RecSum(int[] arr) {
+		this.arr = arr;
+	}
+
+	public RecSum(int[] arr, int lo, int hi) {
+		this.arr = arr;
+
+	}
+
+	public int[] getArr() {
+		return this.arr;
+	}
+
+	public int getRes() {
+		return this.res;
+	}
+
+	public int sum() {
+		int result = 0;
+
+		for (int i = 0; i < arr.length; i++) {
+			result = result + arr[i];
+		}
+		return result;
+	}
+
+	public int recSum(int[] array, int lo, int hi) {
+		int size = hi - lo;
+
+		if (size == 1)
+			return array[lo];
+
+		int mid = size / 2;
+
+		int res1 = recSum(array, lo, lo + mid);
+		int res2 = recSum(array, lo + mid, hi);
+		return res1 + res2;
+	}
+
+}
+
+@SuppressWarnings("serial")
+class parSum extends RecursiveTask<Integer> {
+
+	final int[] arr;
+	final int hi, lo;
+
+	public parSum(int[] arr) {
+		this.arr = arr;
+		this.lo = 0;
+		this.hi = arr.length;
+	}
+
+	public parSum(int[] arr, int lo, int hi) {
+		super();
+		this.arr = arr;
+		this.hi = hi;
+		this.lo = lo;
+	}
+
+	public Integer compute() {
+		int size = hi - lo;
+
+		if (size == 1)
+			return arr[lo];
+
+		int mid = size / 2;
+
+		parSum t1 = new parSum(arr, lo, lo + mid);
+		parSum t2 = new parSum(arr, lo + mid, hi);
+
+		t1.fork();
+		t2.fork();
+
+		int res = t1.join() + t2.join();
+
+		return res;
+
+	}
+}

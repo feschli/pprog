@@ -1,0 +1,34 @@
+package exercise2;
+
+import java.util.Random;
+
+public class ParaProgTest implements Runnable {
+
+	private final int[] arr;
+
+	public RecSum(int[] arr) {
+		this.arr = arr;
+	}
+
+	public int[] getArr() {
+		return this.arr;
+	}
+	
+	public void fillArray(){
+		Random rand = new Random();
+		
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = rand.nextInt(100);
+		}
+	}
+	
+	public void run() {
+
+	}
+
+	public static void main(String[] args) {
+		
+		
+	}
+
+}

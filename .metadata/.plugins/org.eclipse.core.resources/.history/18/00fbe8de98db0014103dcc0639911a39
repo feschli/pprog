@@ -1,0 +1,64 @@
+package exercise2;
+
+import java.util.Random;
+
+public class ParaProgTest {
+	
+	public static void main(String[] args){
+		
+		int[] array = new int[5];
+		RecSum test1 = new RecSum(array);
+		
+		fillArray(test1.getArr());
+		
+		printArray(test1.getArr());
+		
+		System.out.println();
+		System.out.println();
+		
+		System.out.println("The sum of the array is "+test1.sum());
+	}
+	
+
+	public static void fillArray(int[] array){
+		Random rand = new Random();
+		
+		for (int i = 0; i < array.length; i++) {
+			array[i] = rand.nextInt(10);
+		}
+	}	
+	
+	public static void printArray(int[] array){
+		for (int i = 0; i < array.length; i++) {
+			System.out.print(array[i]+" ");
+		}
+	}
+
+}
+
+
+class RecSum implements Runnable{
+	
+	private final int[] arr;
+
+	public RecSum(int[] arr) {
+		this.arr = arr;
+	}
+
+	public int[] getArr() {
+		return this.arr;
+	}
+	
+	public int sum(){
+		int result=0;
+		
+		for (int i = 0; i < arr.length; i++) {
+			result = result + arr[i];
+		}
+		return result;
+	}
+	
+	public void run() {
+
+	}
+}
